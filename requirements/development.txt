@@ -1,3 +1,4 @@
+-r base.txt
 astroid==2.8.0
 backcall==0.2.0
 black==21.9b0
