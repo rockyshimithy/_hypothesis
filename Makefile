@@ -22,9 +22,13 @@ init-env:  ## create a .env file with the environment variables.
 
 requirements:  ## Install pip requirements
 	@pip install --upgrade pip
-	@pip install -r requirements.txt
+	@pip install -r requirements/base.txt
 
-style:	## Run isort and black auto formatting code style in the project
+requirements-dev:  ## Install development pip requirements
+	@pip install --upgrade pip
+	@pip install -r requirements/development.txt
+
+style:  ## Run isort and black auto formatting code style in the project
 	@echo 'running isort...'
 	@isort -m 3 --trailing-comma --use-parentheses --honor-noqa .
 	@echo 'running black...'
@@ -36,3 +40,7 @@ style-check:  ## Run isort and black check code style
 	@echo 'black check...'
 	@black -S -t py37 -l 79 --check $(PROJECT_NAME)/. --exclude '/(\.git|\.venv|env|build|dist)/'
 
+lint:  ## Run the linter to enforce our coding practices
+	@printf '\n --- \n >>> Running linter...<<<\n'
+	@pylint --rcfile=.pylintrc $(PROJECT_NAME)/*
+	@printf '\n FINISHED! \n --- \n'
