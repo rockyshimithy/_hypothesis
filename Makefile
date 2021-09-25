@@ -28,6 +28,23 @@ requirements-dev:  ## Install development pip requirements
 	@pip install --upgrade pip
 	@pip install -r requirements/development.txt
 
+runserver-dev:  ## Run flask development server
+	set -a && source .env && set +a && python dev-server.py
+
+runserver: init-env ## Run gunicorn production server
+	 # Gunicorn needs to bind to 0.0.0.0 so to be able to receive requests from the docker network,
+	 # otherwise it will only receive them locally. With '-' logs are redirected to stdout (because containers)
+	 # /dev/shm tells to the workers to use shared memory, and in-memory filesystem, instead of
+	 # using files, which are slower and can degrade performance - and are not a good practice for
+	 # containers anyhow, since they must redirect all of theirs logs to stdout/stderr.
+	 set -a && source .env && set +a && gunicorn --worker-tmp-dir /dev/shm -c gunicorn_settings.py hypothesis:app -b 0.0.0.0:5000 --log-level INFO  --access-logfile '-' --error-logfile '-'
+
+shell:  ## initialize a shell
+	 set -a && source .env && set +a && flask shell
+
+routes:  ## show all configured api routes
+	 set -a && source .env && set +a && flask routes
+
 style:  ## Run isort and black auto formatting code style in the project
 	@echo 'running isort...'
 	@isort -m 3 --trailing-comma --use-parentheses --honor-noqa .
