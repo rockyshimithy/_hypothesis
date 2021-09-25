@@ -1,0 +1,17 @@
+# To run the project
+flask
+flasgger
+gunicorn
+python-decouple
+python-json-logger
+
+# To development
+ipdb
+coverage
+pylint
+pylint-flask
+black
+isort[colors]
+pytest
+pytest-cov
+pytest-sugar
