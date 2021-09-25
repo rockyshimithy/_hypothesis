@@ -28,10 +28,19 @@ requirements-dev:  ## Install development pip requirements
 	@pip install --upgrade pip
 	@pip install -r requirements/development.txt
 
-runserver-dev:  ## Run flask development server
+docker-compose-up: clean  ## Raise docker-compose for development environment
+	@docker-compose up -d
+
+docker-compose-stop: clean  ## Stop docker-compose for development environment
+	@docker-compose stop
+
+docker-compose-rm: docker-compose-stop ## Delete the development environment containers
+	@docker-compose rm -f
+
+runserver-dev: clean ## Run flask development server
 	set -a && source .env && set +a && python dev-server.py
 
-runserver: init-env ## Run gunicorn production server
+runserver: clean init-env ## Run gunicorn production server
 	 # Gunicorn needs to bind to 0.0.0.0 so to be able to receive requests from the docker network,
 	 # otherwise it will only receive them locally. With '-' logs are redirected to stdout (because containers)
 	 # /dev/shm tells to the workers to use shared memory, and in-memory filesystem, instead of
@@ -39,7 +48,7 @@ runserver: init-env ## Run gunicorn production server
 	 # containers anyhow, since they must redirect all of theirs logs to stdout/stderr.
 	 set -a && source .env && set +a && gunicorn --worker-tmp-dir /dev/shm -c gunicorn_settings.py hypothesis:app -b 0.0.0.0:5000 --log-level INFO  --access-logfile '-' --error-logfile '-'
 
-shell:  ## initialize a shell
+shell: clean ## initialize a shell
 	 set -a && source .env && set +a && flask shell
 
 routes:  ## show all configured api routes

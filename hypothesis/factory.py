@@ -13,7 +13,7 @@ def create_app():
 
     init_swagger(app)
 
-    from hypothesis.api import blueprint
+    from hypothesis.views import blueprint
 
     app.register_blueprint(blueprint)
     return app

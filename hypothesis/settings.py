@@ -59,7 +59,10 @@ SWAGGER_TEMPLATE = {
     'swagger': '2.0',
     'info': {
         'title': 'hypothesis',
-        'description': 'This is a minimal financial project written in flask to provide an API to handle transactions between customers.',
+        'description': '''
+            This is a minimal financial project written in flask to provide an
+            API to handle transactions between customers.
+        ''',
         'contact': {
             'responsibleDeveloper': 'Rocky Shimithy',
             'email': 'shimithy@gmail.com',
