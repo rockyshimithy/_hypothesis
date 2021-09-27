@@ -2,11 +2,12 @@ import pytest
 from sqlalchemy import create_engine
 
 from hypothesis.factory import create_app, db
-from hypothesis.models import Transaction, Customer
-from hypothesis.schemas import TransactionSchema, CustomerSchema
+from hypothesis.models import Customer, Transaction
+from hypothesis.schemas import CustomerSchema, TransactionSchema
 
 address = 'postgresql://postgres:postgres@127.0.0.1'
 database = 'test_hypothesis'
+
 
 def create_database():
     conn = create_engine(address, isolation_level='AUTOCOMMIT')
@@ -84,10 +85,9 @@ def customer_payload():
 @pytest.fixture()
 def customers_saved(customer_payload):
     db.session.execute('TRUNCATE TABLE customer RESTART IDENTITY CASCADE')
-    for i in range(100):    
+    for i in range(100):
         customer_payload['name'] = f'pizza-planet-{i}'
         data = CustomerSchema().load(customer_payload)
         customer = Customer(**data)
         db.session.add(customer)
         db.session.commit()
-

@@ -10,11 +10,11 @@ class Configuration:
     DEBUG = False
     TESTING = False
     DEVELOPMENT = False
-    
+
     DB_USER = config('DB_USER')
     DB_PASSWORD = config('DB_PASSWORD')
     DB_HOST = config('DB_HOST', default='0.0.0.0')
-    
+
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_DATABASE_URI = (
         f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/hypothesis'
@@ -25,7 +25,9 @@ class Configuration:
     LOG_VARS = config('LOG_VARS', cast=str).replace("'", '').replace('"', '')
     JSON_LOGS = config('JSON_LOGS', default=False, cast=bool)
     if JSON_LOGS:
-        log_format = ' '.join([f'%({variable})' for variable in LOG_VARS.split()])
+        log_format = ' '.join(
+            [f'%({variable})' for variable in LOG_VARS.split()]
+        )
     else:
         log_format = ''
         for index, variable in enumerate(LOG_VARS.split()):
