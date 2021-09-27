@@ -9,13 +9,15 @@ from flask.views import MethodView
 class BaseView(MethodView):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.data = {}
+        self.page = 1
+        self.query_string = request.args.to_dict()
         self.status_code = 200
 
     def get(self):
-        self.query_string = request.args.to_dict()
-        self.page = self.query_string.get('page')
-        if not isinstance(self.page, int):
-            self.page = 1
+        page = self.query_string.get('page')
+        if isinstance(page, int):
+            self.page = page
 
     def get_response(self):
         response = [
@@ -25,8 +27,8 @@ class BaseView(MethodView):
         return self.response(response)
 
     def post(self):
-        self.payload = request.get_json()
-        self.data = self.schema.load(self.payload)
+        payload = request.get_json()
+        self.data = self.schema.load(payload)
 
     def response(self, response):
         return jsonify(response), self.status_code

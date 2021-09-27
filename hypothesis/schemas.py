@@ -1,18 +1,12 @@
 from datetime import datetime
 
-from marshmallow import (
-    EXCLUDE,
-    Schema,
-    ValidationError,
-    fields,
-    post_load,
-    pre_load,
-)
+from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_load
 from marshmallow.validate import Length, Range
 
 from hypothesis.models import Customer
 
 
+# pylint: disable=unused-argument,no-self-use
 class TransactionSchema(Schema):
     _id = fields.Integer(attribute='_id')
     datetime = fields.DateTime()

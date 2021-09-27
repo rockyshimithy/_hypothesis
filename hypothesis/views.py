@@ -6,11 +6,9 @@ from sqlalchemy import Date, cast, or_
 from sqlalchemy.exc import IntegrityError
 
 from hypothesis.commons import BaseView
-from hypothesis.exceptions import APIError
 from hypothesis.factory import db
 from hypothesis.models import Customer, Transaction
 from hypothesis.schemas import CustomerSchema, TransactionSchema
-from hypothesis.settings import Configuration
 
 logger = logging.getLogger(__name__)
 
@@ -58,8 +56,6 @@ class TransactionView(BaseView):
         except ValidationError as e:
             self.status_code = 400
             response = {'error': e.args[0]}
-        except Exception as e:
-            pizza = e
         else:
             self.status_code = 201
             response = self.schema.dump(transaction)

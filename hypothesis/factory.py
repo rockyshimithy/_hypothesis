@@ -9,10 +9,11 @@ from hypothesis.extensions import init_swagger
 PKG_NAME = os.path.dirname(os.path.realpath(__file__)).split('/')[-1]
 db = SQLAlchemy()
 
-# pylint: disable=import-outside-toplevel
+# pylint: disable=import-outside-toplevel,dangerous-default-value
 def create_app(settings_override={}):
     app = Flask(PKG_NAME)
     app.config.from_object('hypothesis.settings.Configuration')
+    app.config.update(settings_override)
 
     db.init_app(app)
 
@@ -37,5 +38,4 @@ def create_app(settings_override={}):
     return app
 
 
-app = create_app()
-migrate = Migrate(app, db)
+migrate = Migrate(create_app(), db)

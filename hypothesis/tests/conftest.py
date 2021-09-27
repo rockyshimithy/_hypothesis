@@ -26,6 +26,7 @@ def create_database():
     return create_engine(f'{address}/{database}', isolation_level='AUTOCOMMIT')
 
 
+# pylint: disable=redefined-outer-name,unused-argument
 @pytest.fixture(scope='session')
 def app(request):
     testing_settings = {
@@ -35,9 +36,9 @@ def app(request):
         'SQLALCHEMY_TRACK_MODIFICATIONS': True,
     }
 
-    app = create_app(settings_override=testing_settings)
+    application = create_app(settings_override=testing_settings)
 
-    context = app.app_context()
+    context = application.app_context()
     context.push()
 
     create_database()
@@ -49,7 +50,7 @@ def app(request):
         context.pop()
 
     request.addfinalizer(teardown)
-    return app
+    return application
 
 
 @pytest.fixture(scope='function')
@@ -58,11 +59,11 @@ def session(request, app):
         connection = db.engine.connect()
         transaction = connection.begin()
 
-    session = db.create_scoped_session(
+    scoped_session = db.create_scoped_session(
         options={'bind': connection, 'binds': {}}
     )
 
-    db.session = session
+    db.session = scoped_session
 
     def teardown():
         if transaction.is_active:
@@ -70,7 +71,7 @@ def session(request, app):
             db.session.query(Customer).delete()
             transaction.commit()
         connection.close()
-        session.remove()
+        scoped_session.remove()
 
     request.addfinalizer(teardown)
 

@@ -1,11 +1,11 @@
 from decimal import Decimal
-from unittest import mock
 
 import pytest
 
 from hypothesis.models import Customer, Transaction
 
 
+# pylint: disable=too-many-arguments
 @pytest.mark.usefixtures('session')
 def test_create_transaction_with_success(client, headers, transaction_payload):
     response = client.post(

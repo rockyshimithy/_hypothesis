@@ -22,7 +22,7 @@ class Transaction(db.Model):
     )
     customer_target_value = Column(
         Numeric(precision=14, scale=2), nullable=False
-    )  # check scale
+    )
 
 
 class Customer(db.Model):

@@ -1,11 +1,11 @@
 from decimal import Decimal
-from unittest import mock
 
 import pytest
 
 from hypothesis.models import Customer
 
 
+# pylint: disable=too-many-arguments
 @pytest.mark.usefixtures('session')
 def test_create_customer_with_success(client, headers, customer_payload):
     response = client.post(
@@ -47,7 +47,7 @@ def test_create_customer_failed_already_exists(
         '/customers/', json=customer_payload, headers=headers
     )
 
-    customer = Customer.query.filter_by(name=customer_payload['name']).first()
+    Customer.query.filter_by(name=customer_payload['name']).first()
 
     assert response.status_code == 409
     assert response.headers['Content-Type'] == 'application/json'
@@ -102,7 +102,7 @@ def test_list_customers_search_by_name(client, headers):
 
     assert response.status_code == 200
     assert len(content) == 11
-    for x, i in zip(range(12), [1] + [a for a in range(10, 20)]):
+    for x, i in zip(range(12), [1] + list(range(10, 20))):
         assert content[x]['name'] == f'pizza-planet-{i}'
 
 
