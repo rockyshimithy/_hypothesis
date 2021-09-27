@@ -1,5 +1,5 @@
 import pytest
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 
 from hypothesis.factory import create_app, db
 from hypothesis.models import Customer, Transaction
@@ -81,17 +81,19 @@ def headers():
 def customer_payload():
     return {'name': 'pizza-planet'}
 
+
 @pytest.fixture()
 def customers_saved(customer_payload):
     db.session.execute('TRUNCATE TABLE customer RESTART IDENTITY CASCADE')
     for i in range(98):
-        customer_payload['name'] = f'pizza-planet-{i}' 
+        customer_payload['name'] = f'pizza-planet-{i}'
         save_resource(CustomerSchema, Customer, customer_payload)
 
     customer_payload['name'] = 'company-x'
     save_resource(CustomerSchema, Customer, customer_payload)
     customer_payload['name'] = 'company-y'
     save_resource(CustomerSchema, Customer, customer_payload)
+
 
 @pytest.fixture()
 def transaction_payload(customers_saved):
@@ -100,11 +102,32 @@ def transaction_payload(customers_saved):
     return {
         'customer_source': customer_source._id,
         'customer_target': customer_target._id,
-        'value': 50
+        'value': 50,
     }
+
+
+@pytest.fixture()
+def transactions_saved(transaction_payload):
+    # mock datetime
+    for i in range(1, 101):
+        payload = {**transaction_payload}
+        if i % 4 == 0:
+            payload['customer_source'] = transaction_payload['customer_target']
+            payload['customer_target'] = transaction_payload['customer_source']
+            payload['value'] = i
+
+        data = save_resource(TransactionSchema, Transaction, payload)
+        data['source_obj'].balance = data['customer_source_value']
+        data['target_obj'].balance = data['customer_target_value']
+        db.session.commit()
+
 
 def save_resource(schema, model, payload):
     data = schema().load(payload)
-    model_object = model(**data)
+    mapper = inspect(model)
+    model_object = model(
+        **{k: v for k, v in data.items() if k in mapper.column_attrs.keys()}
+    )
     db.session.add(model_object)
     db.session.commit()
+    return data

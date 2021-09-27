@@ -93,6 +93,7 @@ def test_list_customers(client, headers):
     assert content[19]['name'] == 'pizza-planet-19'
     assert content[19]['_id'] == 20
 
+
 @pytest.mark.usefixtures('session', 'customers_saved')
 def test_list_customers_search_by_name(client, headers):
     response = client.get('/customers/?name=planet-1', headers=headers)
@@ -110,7 +111,7 @@ def test_list_customers_search_by_identifier(client, headers):
     response = client.get('/customers/?id=2', headers=headers)
 
     content = response.json
-    
+
     assert response.status_code == 200
     assert len(content) == 1
     assert content[0]['name'] == 'pizza-planet-1'

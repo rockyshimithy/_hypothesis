@@ -1,6 +1,13 @@
 from datetime import datetime
 
-from marshmallow import EXCLUDE, Schema, fields, post_load, pre_load, ValidationError
+from marshmallow import (
+    EXCLUDE,
+    Schema,
+    ValidationError,
+    fields,
+    post_load,
+    pre_load,
+)
 from marshmallow.validate import Length, Range
 
 from hypothesis.models import Customer
@@ -20,27 +27,32 @@ class TransactionSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    @pre_load
-    def checking_users(self, data, **kwargs):
-        if data['customer_source'] == data['customer_target']:
-            raise ValidationError('Customers should not be the same to create a transaction')
-        return data
-
     @post_load
     def prepare_object(self, data, **kwargs):
         data['datetime'] = datetime.now().isoformat()
-        
+
+        if data['customer_source'] == data['customer_target']:
+            raise ValidationError(
+                'Customers should not be the same to create a transaction'
+            )
+
         data['source_obj'] = Customer.query.get(data['customer_source'])
         data['target_obj'] = Customer.query.get(data['customer_target'])
-        
+
         if not data['source_obj'] or not data['target_obj']:
-            raise ValidationError('Invalid identifier(s), customer(s) not found')
+            raise ValidationError(
+                'Invalid identifier(s), customer(s) not found'
+            )
 
         data['customer_source'] = data['source_obj']._id
         data['customer_target'] = data['target_obj']._id
 
-        data['customer_source_value'] = float(data['source_obj'].balance) - data['value']
-        data['customer_target_value'] = float(data['target_obj'].balance) + data['value']
+        data['customer_source_value'] = (
+            float(data['source_obj'].balance) - data['value']
+        )
+        data['customer_target_value'] = (
+            float(data['target_obj'].balance) + data['value']
+        )
         return data
 
 
