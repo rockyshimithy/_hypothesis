@@ -31,7 +31,7 @@ def test_create_customer_with_balance_success(client, headers, customer_payload)
     assert customer.balance == Decimal('50.05')
 
 
-@pytest.mark.usefixtures('session', 'customer_saved')
+@pytest.mark.usefixtures('session', 'customers_saved')
 def test_create_customer_failed_already_exists(client, headers, customer_payload):
     response = client.post('/customers/', json=customer_payload, headers=headers)
 
@@ -57,47 +57,36 @@ def test_create_customer_badrequest(client, headers, customer_payload, field, va
     assert response.json['error'] == expected_response
 
 
-@pytest.mark.usefixtures('session')
+@pytest.mark.usefixtures('session', 'customers_saved')
 def test_list_customers(client, headers):
-    import ipdb; ipdb.set_trace();    
     response = client.get('/customers/', headers=headers)
 
     content = response.json
 
     assert response.status_code == 200
-    assert len(content) == 10
+    assert len(content) == 20
+    assert content[0]['name'] == 'pizza-planet-0'
+    assert content[19]['name'] == 'pizza-planet-19'
 
-@pytest.mark.usefixtures('session')
-def test_list_customers_search_by_name():
-    pass
+@pytest.mark.usefixtures('session', 'customers_saved')
+def test_list_customers_search_by_name(client, headers):
+    response = client.get('/customers/?name=planet-1', headers=headers)
 
-@pytest.mark.usefixtures('session')
-def test_list_customers_search_by_pk():
-    pass
+    content = response.json
 
+    assert response.status_code == 200
+    assert len(content) == 11
+    for x, i in zip(range(12), [1] + [a for a in range(10, 20)]):
+        assert content[x]['name'] == f'pizza-planet-{i}'
 
+@pytest.mark.usefixtures('session', 'customers_saved')
+def test_list_customers_search_by_identifier(client, headers):
+    response = client.get('/customers/?id=50', headers=headers)
 
+    content = response.json
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    assert response.status_code == 200
+    assert len(content) == 1
+    assert content[0]['name'] == 'pizza-planet-49'
 
 
