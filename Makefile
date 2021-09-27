@@ -20,13 +20,21 @@ init-env:  ## create a .env file with the environment variables.
 	@cp etc/env.sample .env
 	@echo '.env file initialized at the project root. Customize it as you may.'
 
-requirements:  ## Install pip requirements
-	@pip install --upgrade pip
-	@pip install -r requirements/base.txt
-
-requirements-dev:  ## Install development pip requirements
+requirements-pip:  ## Install pip requirements
 	@pip install --upgrade pip
 	@pip install -r requirements/development.txt
+
+init-db:  ## Start alembic with new DB
+	#@python -m $(PROJECT_NAME).factory db init
+	@flask db init
+
+migrate:  ## Create migrations
+	#@python -m $(PROJECT_NAME).factory db migrate
+	@flask db migrate
+
+upgrade: ## Execute the migrations
+	#@python -m $(PROJECT_NAME).factory db upgrade
+	@flask db upgrade
 
 docker-compose-up: clean  ## Raise docker-compose for development environment
 	@docker-compose up -d
@@ -70,3 +78,10 @@ lint:  ## Run the linter to enforce our coding practices
 	@printf '\n --- \n >>> Running linter...<<<\n'
 	@pylint --rcfile=.pylintrc $(PROJECT_NAME)/*
 	@printf '\n FINISHED! \n --- \n'
+
+test: clean  ## Run the test suite
+	@cd $(PROJECT_NAME) && py.test -s -vvv
+
+coverage: clean  ## Run the test coverage report
+	@py.test --cov-config .coveragerc --cov $(PROJECT_NAME) $(PROJECT_NAME) --cov-report term-missing
+

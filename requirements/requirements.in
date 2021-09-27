@@ -1,9 +1,13 @@
 # To run the project
 flask
 flasgger
+psycopg2-binary
+flask-sqlalchemy
+Flask-Migrate
 gunicorn
 python-decouple
 python-json-logger
+marshmallow
 
 # To development
 ipdb

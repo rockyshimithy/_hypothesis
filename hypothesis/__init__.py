@@ -1,3 +1,1 @@
-from hypothesis.factory import create_app
-
-app = create_app()
+from hypothesis.factory import app

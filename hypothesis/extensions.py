@@ -6,8 +6,8 @@ https://flask.palletsprojects.com/en/1.1.x/patterns/appfactories/#factories-exte
 
 from flasgger import Swagger
 
-from hypothesis import settings
+from hypothesis.settings import Configuration
 
 
 def init_swagger(app):
-    return Swagger(app, template=settings.SWAGGER_TEMPLATE)
+    return Swagger(app, template=Configuration.SWAGGER_TEMPLATE)
