@@ -15,6 +15,7 @@ coverage
 pylint
 pylint-flask
 black
+freezegun
 isort[colors]
 pytest
 pytest-cov

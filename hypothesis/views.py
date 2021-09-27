@@ -4,7 +4,7 @@ from datetime import datetime
 import flask
 from flask import Blueprint, jsonify, request
 from marshmallow.exceptions import ValidationError
-from sqlalchemy import or_
+from sqlalchemy import Date, cast, or_
 from sqlalchemy.exc import IntegrityError
 
 from hypothesis.exceptions import APIError
@@ -42,7 +42,9 @@ def transactions():
             status_code = 400
             response = {'error': e.args[0]}
         except Exception as e:
-            import ipdb;ipdb.set_trace()
+            import ipdb
+
+            ipdb.set_trace()
             pizza = e
         else:
             status_code = 201
@@ -55,12 +57,11 @@ def transactions():
             page = 1
 
         if query_string.get('date'):
-            import ipdb;ipdb.set_trace()
             query = query.filter(
-                Transaction.datetime == query_string['date']
-            )  # TODO
+                cast(Transaction.datetime, Date)
+                == datetime.strptime(query_string['date'], '%Y-%m-%d')
+            )
         if query_string.get('customer_id'):
-            import ipdb;ipdb.set_trace()
             query = query.filter(
                 or_(
                     Transaction.customer_source == query_string['customer_id'],

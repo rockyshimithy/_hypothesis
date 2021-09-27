@@ -1,4 +1,7 @@
+from datetime import datetime, timedelta
+
 import pytest
+from freezegun import freeze_time
 from sqlalchemy import create_engine, inspect
 
 from hypothesis.factory import create_app, db
@@ -108,18 +111,20 @@ def transaction_payload(customers_saved):
 
 @pytest.fixture()
 def transactions_saved(transaction_payload):
-    # mock datetime
+    date = datetime(2025, 4, 20)
     for i in range(1, 101):
+        date += timedelta(hours=10)
         payload = {**transaction_payload}
         if i % 4 == 0:
             payload['customer_source'] = transaction_payload['customer_target']
             payload['customer_target'] = transaction_payload['customer_source']
             payload['value'] = i
 
-        data = save_resource(TransactionSchema, Transaction, payload)
-        data['source_obj'].balance = data['customer_source_value']
-        data['target_obj'].balance = data['customer_target_value']
-        db.session.commit()
+        with freeze_time(date.strftime('%Y-%m-%d')):
+            data = save_resource(TransactionSchema, Transaction, payload)
+            data['source_obj'].balance = data['customer_source_value']
+            data['target_obj'].balance = data['customer_target_value']
+            db.session.commit()
 
 
 def save_resource(schema, model, payload):

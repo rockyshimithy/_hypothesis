@@ -174,23 +174,27 @@ def test_list_transactions_search_by_customer_id(client, headers):
 
     content = response.json
 
-    import ipdb
-
-    ipdb.set_trace()
     assert response.status_code == 200
     assert len(content) == 20
 
+    response = client.get('/transactions/?customer_id=50', headers=headers)
 
-#    for x, i in zip(range(12), [1] + [a for a in range(10, 20)]):
-#        assert content[x]['name'] == f'pizza-planet-{i}'
+    content = response.json
+    assert response.status_code == 200
+    assert len(content) == 0
 
 
-# @pytest.mark.usefixtures('session', 'customers_saved')
-# def test_list_customers_search_by_identifier(client, headers):
-#    response = client.get('/customers/?id=50', headers=headers)
-#
-#    content = response.json
-#
-#    assert response.status_code == 200
-#    assert len(content) == 1
-#    assert content[0]['name'] == 'pizza-planet-49'
+@pytest.mark.usefixtures('session', 'transactions_saved')
+def test_list_transactions_search_by_data(client, headers):
+    response = client.get('/transactions/?date=2025-04-25', headers=headers)
+
+    content = response.json
+
+    assert response.status_code == 200
+    assert len(content) == 3
+
+    response = client.get('/transactions/?date=2020-04-25', headers=headers)
+
+    content = response.json
+    assert response.status_code == 200
+    assert len(content) == 0
