@@ -1,16 +1,16 @@
 from datetime import datetime
 
-from marshmallow import EXCLUDE, Schema, fields, post_load, pre_load, validate
+from marshmallow import EXCLUDE, Schema, fields, post_load, pre_load, ValidationError
 from marshmallow.validate import Length, Range
 
 from hypothesis.models import Customer
 
 
 class TransactionSchema(Schema):
-    _id = fields.Integer(attribute='id')
+    _id = fields.Integer(attribute='_id')
     datetime = fields.DateTime()
-    customer_source = fields.String(required=True)
-    customer_target = fields.String(required=True)
+    customer_source = fields.Integer(required=True)
+    customer_target = fields.Integer(required=True)
     value = fields.Float(
         required=True, validate=Range(min=0, min_inclusive=False)
     )
@@ -20,25 +20,32 @@ class TransactionSchema(Schema):
     class Meta:
         unknown = EXCLUDE
 
-    # validate if customers source and target exists and aren't the same
     @pre_load
     def checking_users(self, data, **kwargs):
+        if data['customer_source'] == data['customer_target']:
+            raise ValidationError('Customers should not be the same to create a transaction')
         return data
 
     @post_load
     def prepare_object(self, data, **kwargs):
         data['datetime'] = datetime.now().isoformat()
-        data[
-            'customer_source_value'
-        ] = 100  # to be calculate when customer model be created
-        # calculate and provide customer_source_balance_value and customer_target_balance_value
-        data['customer_target_value'] = 100
+        
+        data['source_obj'] = Customer.query.get(data['customer_source'])
+        data['target_obj'] = Customer.query.get(data['customer_target'])
+        
+        if not data['source_obj'] or not data['target_obj']:
+            raise ValidationError('Invalid identifier(s), customer(s) not found')
+
+        data['customer_source'] = data['source_obj']._id
+        data['customer_target'] = data['target_obj']._id
+
+        data['customer_source_value'] = float(data['source_obj'].balance) - data['value']
+        data['customer_target_value'] = float(data['target_obj'].balance) + data['value']
         return data
 
 
 class CustomerSchema(Schema):
-
-    _id = fields.Integer(attribute='id')
+    _id = fields.Integer(attribute='_id')
     name = fields.String(required=True, validate=Length(min=1, max=50))
     balance = fields.Float()
 

@@ -16,7 +16,8 @@ def test_create_customer_with_success(client, headers, customer_payload):
 
     assert response.status_code == 201
     assert response.headers['Content-Type'] == 'application/json'
-    assert customer.name == customer_payload['name']
+    assert customer._id == response.json['_id']
+    assert customer.name == customer_payload['name'] == response.json['name']
     assert customer.balance == 0.0
 
 
@@ -62,6 +63,9 @@ def test_create_customer_failed_already_exists(
         ('name', 'pizza' * 11, {'name': ['Length must be between 1 and 50.']}),
         ('name', '', {'name': ['Length must be between 1 and 50.']}),
         ('name', 20.1, {'name': ['Not a valid string.']}),
+        ('balance', None, {'balance': ['Field may not be null.']}),
+        ('balance', {}, {'balance': ['Not a valid number.']}),
+        ('balance', 'not_valid', {'balance': ['Not a valid number.']}),
     ],
 )
 def test_create_customer_badrequest(
@@ -85,8 +89,9 @@ def test_list_customers(client, headers):
     assert response.status_code == 200
     assert len(content) == 20
     assert content[0]['name'] == 'pizza-planet-0'
+    assert content[0]['_id'] == 1
     assert content[19]['name'] == 'pizza-planet-19'
-
+    assert content[19]['_id'] == 20
 
 @pytest.mark.usefixtures('session', 'customers_saved')
 def test_list_customers_search_by_name(client, headers):
@@ -102,10 +107,10 @@ def test_list_customers_search_by_name(client, headers):
 
 @pytest.mark.usefixtures('session', 'customers_saved')
 def test_list_customers_search_by_identifier(client, headers):
-    response = client.get('/customers/?id=50', headers=headers)
+    response = client.get('/customers/?id=2', headers=headers)
 
     content = response.json
-
+    
     assert response.status_code == 200
     assert len(content) == 1
-    assert content[0]['name'] == 'pizza-planet-49'
+    assert content[0]['name'] == 'pizza-planet-1'

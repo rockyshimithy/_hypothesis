@@ -81,13 +81,30 @@ def headers():
 def customer_payload():
     return {'name': 'pizza-planet'}
 
-
 @pytest.fixture()
 def customers_saved(customer_payload):
     db.session.execute('TRUNCATE TABLE customer RESTART IDENTITY CASCADE')
-    for i in range(100):
-        customer_payload['name'] = f'pizza-planet-{i}'
-        data = CustomerSchema().load(customer_payload)
-        customer = Customer(**data)
-        db.session.add(customer)
-        db.session.commit()
+    for i in range(98):
+        customer_payload['name'] = f'pizza-planet-{i}' 
+        save_resource(CustomerSchema, Customer, customer_payload)
+
+    customer_payload['name'] = 'company-x'
+    save_resource(CustomerSchema, Customer, customer_payload)
+    customer_payload['name'] = 'company-y'
+    save_resource(CustomerSchema, Customer, customer_payload)
+
+@pytest.fixture()
+def transaction_payload(customers_saved):
+    customer_source = Customer.query.filter_by(name='company-x').first()
+    customer_target = Customer.query.filter_by(name='company-y').first()
+    return {
+        'customer_source': customer_source._id,
+        'customer_target': customer_target._id,
+        'value': 50
+    }
+
+def save_resource(schema, model, payload):
+    data = schema().load(payload)
+    model_object = model(**data)
+    db.session.add(model_object)
+    db.session.commit()

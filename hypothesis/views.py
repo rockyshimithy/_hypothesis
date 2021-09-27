@@ -27,14 +27,19 @@ def transactions():
         try:
             payload = request.get_json()
             data = schema.load(payload)
-
+            
+            source = data.pop('source_obj')
+            target = data.pop('target_obj')
+            source.balance = data['customer_source_value']
+            target.balance = data['customer_target_value']
+           
             transaction = Transaction(**data)
-
-            # update source and target balance as well
-            # see if is possible pass more transactions to add
-        
+            
             db.session.add(transaction)
             db.session.commit()
+        except ValidationError as e:
+            status_code = 400
+            response = {'error': e.args[0]}
         except Exception as e:
             import ipdb;ipdb.set_trace()
             pizza = e
@@ -43,7 +48,7 @@ def transactions():
             response = schema.dump(transaction)
 
     else:
-        query_string request.args.to_dict()
+        query_string = request.args.to_dict()
         
         page = query_string.get('page')
         if not isinstance(page, int):
