@@ -82,6 +82,9 @@ lint:  ## Run the linter to enforce our coding practices
 test: clean  ## Run the test suite
 	@cd $(PROJECT_NAME) && py.test -s -vvv
 
+test-matching: clean  ## Run only tests matching pattern. E.g.: make test-matching test=TestClassName
+	@cd $(PROJECT_NAME) && py.test -s -vvv -k $(test)
+
 coverage: clean  ## Run the test coverage report
 	@py.test --cov-config .coveragerc --cov $(PROJECT_NAME) $(PROJECT_NAME) --cov-report term-missing
 
