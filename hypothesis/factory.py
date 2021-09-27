@@ -1,7 +1,6 @@
 import os
 
 from flask import Blueprint, Flask
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 from hypothesis.extensions import init_swagger
@@ -36,6 +35,3 @@ def create_app(settings_override={}):
 
     app.register_blueprint(blueprint)
     return app
-
-
-migrate = Migrate(create_app(), db)

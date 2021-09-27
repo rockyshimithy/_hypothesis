@@ -68,12 +68,6 @@ style:  ## Run isort and black auto formatting code style in the project
 	@echo 'running black...'
 	@black -S -t py39 -l 79 $(PROJECT_NAME)/. --exclude '/(\.git|\.venv|env|build|dist)/'
 
-style-check:  ## Run isort and black check code style
-	@echo 'isort check...'
-	@isort -v --check -m 3 --trailing-comma --use-parentheses --honor-noqa --color .
-	@echo 'black check...'
-	@black -S -t py37 -l 79 --check $(PROJECT_NAME)/. --exclude '/(\.git|\.venv|env|build|dist)/'
-
 lint:  ## Run the linter to enforce our coding practices
 	@printf '\n --- \n >>> Running linter...<<<\n'
 	@pylint --rcfile=.pylintrc $(PROJECT_NAME)/*
