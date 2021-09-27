@@ -38,9 +38,6 @@ def get_version_file_path() -> str:
     root_path = Path().absolute()
     file_path = os.path.join(str(root_path), 'VERSION')
 
-    # needed to run the tests, since there it will be
-    # on the hypothesis package directory,
-    # not in the projects' root dir:
     if not os.path.exists(file_path):
         root_path = root_path.parent
         file_path = os.path.join(str(root_path), 'VERSION')
