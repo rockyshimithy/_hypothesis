@@ -1,116 +1,108 @@
 import logging
 from datetime import datetime
 
-import flask
-from flask import Blueprint, jsonify, request
 from marshmallow.exceptions import ValidationError
 from sqlalchemy import Date, cast, or_
 from sqlalchemy.exc import IntegrityError
 
+from hypothesis.commons import BaseView
 from hypothesis.exceptions import APIError
 from hypothesis.factory import db
 from hypothesis.models import Customer, Transaction
 from hypothesis.schemas import CustomerSchema, TransactionSchema
 from hypothesis.settings import Configuration
 
-blueprint = Blueprint('api', __name__)
-
 logger = logging.getLogger(__name__)
 
 
-@blueprint.route('/transactions/', methods=['GET', 'POST'])
-def transactions():
-    query = Transaction.query
-    schema = TransactionSchema()
-    status_code = 200
+class TransactionView(BaseView):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.model = Transaction
+        self.query = self.model.query
+        self.schema = TransactionSchema()
 
-    if request.method == 'POST':
+    def get(self):
+        super().get()
+
+        if self.query_string.get('date'):
+            self.query = self.query.filter(
+                cast(self.model.datetime, Date)
+                == datetime.strptime(self.query_string['date'], '%Y-%m-%d')
+            )
+        if self.query_string.get('customer_id'):
+            self.query = self.query.filter(
+                or_(
+                    self.model.customer_source
+                    == self.query_string['customer_id'],
+                    self.model.customer_target
+                    == self.query_string['customer_id'],
+                )
+            )
+
+        return self.get_response()
+
+    def post(self):
         try:
-            payload = request.get_json()
-            data = schema.load(payload)
+            super().post()
 
-            source = data.pop('source_obj')
-            target = data.pop('target_obj')
-            source.balance = data['customer_source_value']
-            target.balance = data['customer_target_value']
+            source = self.data.pop('source_obj')
+            target = self.data.pop('target_obj')
+            source.balance = self.data['customer_source_value']
+            target.balance = self.data['customer_target_value']
 
-            transaction = Transaction(**data)
+            transaction = Transaction(**self.data)
 
             db.session.add(transaction)
             db.session.commit()
         except ValidationError as e:
-            status_code = 400
+            self.status_code = 400
             response = {'error': e.args[0]}
         except Exception as e:
-            import ipdb
-
-            ipdb.set_trace()
             pizza = e
         else:
-            status_code = 201
-            response = schema.dump(transaction)
-    else:
-        query_string = request.args.to_dict()
+            self.status_code = 201
+            response = self.schema.dump(transaction)
 
-        page = query_string.get('page')
-        if not isinstance(page, int):
-            page = 1
+        return self.response(response)
 
-        if query_string.get('date'):
-            query = query.filter(
-                cast(Transaction.datetime, Date)
-                == datetime.strptime(query_string['date'], '%Y-%m-%d')
+
+class CustomerView(BaseView):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.model = Customer
+        self.query = self.model.query
+        self.schema = CustomerSchema()
+
+    def get(self):
+        super().get()
+
+        if self.query_string.get('id'):  # test to filter with others values
+            self.query = self.query.filter_by(_id=self.query_string['id'])
+        elif self.query_string.get('name'):
+            self.query = self.query.filter(
+                Customer.name.contains(self.query_string['name'])
             )
-        if query_string.get('customer_id'):
-            query = query.filter(
-                or_(
-                    Transaction.customer_source == query_string['customer_id'],
-                    Transaction.customer_target == query_string['customer_id'],
-                )
-            )  # TODO
 
-        response = [schema.dump(t) for t in query.paginate(page, 20).items]
+        return self.get_response()
 
-    return jsonify(response), status_code
-
-
-@blueprint.route('/customers/', methods=['GET', 'POST'])
-def customers():
-    query = Customer.query
-    schema = CustomerSchema()
-    status_code = 200
-
-    if request.method == 'POST':
+    def post(self):
         try:
-            payload = request.get_json()
-            data = schema.load(payload)
+            super().post()
 
-            customer = Customer(**data)
+            customer = Customer(**self.data)
 
             db.session.add(customer)
             db.session.commit()
         except ValidationError as e:
-            status_code = 400
+            self.status_code = 400
             response = {'error': e.args[0]}
         except IntegrityError:
             db.session.rollback()
-            status_code = 409
+            self.status_code = 409
             response = {'error': 'Customer already exists'}
         else:
-            status_code = 201
-            response = schema.dump(customer)
-    else:
-        query_string = request.args.to_dict()
+            self.status_code = 201
+            response = self.schema.dump(customer)
 
-        page = query_string.get('page')
-        if not isinstance(page, int):
-            page = 1
-
-        if query_string.get('id'):  # test to filter with others values
-            query = query.filter_by(_id=query_string['id'])
-        elif query_string.get('name'):
-            query = query.filter(Customer.name.contains(query_string['name']))
-
-        response = [schema.dump(c) for c in query.paginate(page, 20).items]
-
-    return jsonify(response), status_code
+        return self.response(response)

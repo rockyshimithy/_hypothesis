@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Blueprint, Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
@@ -18,7 +18,20 @@ def create_app(settings_override={}):
 
     init_swagger(app)
 
-    from hypothesis.views import blueprint
+    blueprint = Blueprint('api', __name__)
+
+    from hypothesis.views import CustomerView, TransactionView
+
+    blueprint.add_url_rule(
+        '/customers/',
+        view_func=CustomerView.as_view('customer'),
+        methods=['GET', 'POST'],
+    )
+    blueprint.add_url_rule(
+        '/transactions/',
+        view_func=TransactionView.as_view('transaction'),
+        methods=['GET', 'POST'],
+    )
 
     app.register_blueprint(blueprint)
     return app
