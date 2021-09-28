@@ -29,14 +29,14 @@ requirements-pip:  ## Install pip requirements
 	@pip install --upgrade pip
 	@pip install -r requirements/development.txt
 
-init-db: export-flask-var  ## Start alembic with new DB
-	@flask db init
+init-db:  ## Start alembic with new DB
+	@set -a && source .env && set +a && flask db init
 
-migrate: export-flask-var  ## Create migrations
-	@flask db migrate
+migrate:  ## Create migrations
+	@set -a && source .env && set +a && flask db migrate
 
-upgrade-migrations: export-flask-var  ## Execute the migrations
-	@flask db upgrade
+upgrade-migrations:  ## Execute the migrations
+	@set -a && source .env && set +a && flask db upgrade
 
 docker-compose-up: clean  ## Raise docker-compose for development environment
 	@docker-compose up -d
@@ -53,25 +53,25 @@ docker-build-image: clean  ## Build local docker image
 docker-run-server: clean  ## Run the app docker image locally
 	@docker run --rm -d -p 5000:5000 --name hypothesis --env-file .env --network bridge hypothesis:latest
 
-runserver-dev: clean export-flask-var  ## Run flask development server
-	set -a && source .env && set +a && python dev-server.py
+runserver-dev: clean  ## Run flask development server
+	@set -a && source .env && set +a && python dev-server.py
 
-runserver: clean export-flask-var  ## Run gunicorn production server
-	 # Gunicorn needs to bind to 0.0.0.0 so to be able to receive requests from the docker network,
-	 # otherwise it will only receive them locally. With '-' logs are redirected to stdout (because containers)
-	 # /dev/shm tells to the workers to use shared memory, and in-memory filesystem, instead of
-	 # using files, which are slower and can degrade performance - and are not a good practice for
-	 # containers anyhow, since they must redirect all of theirs logs to stdout/stderr.
-	 set -a && source .env && set +a && gunicorn --worker-tmp-dir /dev/shm -c gunicorn_settings.py hypothesis:app -b 0.0.0.0:5000 --log-level INFO  --access-logfile '-' --error-logfile '-'
+runserver: clean  ## Run gunicorn production server
+	# Gunicorn needs to bind to 0.0.0.0 so to be able to receive requests from the docker network,
+	# otherwise it will only receive them locally. With '-' logs are redirected to stdout (because containers)
+	# /dev/shm tells to the workers to use shared memory, and in-memory filesystem, instead of
+	# using files, which are slower and can degrade performance - and are not a good practice for
+	# containers anyhow, since they must redirect all of theirs logs to stdout/stderr.
+	@set -a && source .env && set +a && gunicorn --worker-tmp-dir /dev/shm -c gunicorn_settings.py hypothesis:app -b 0.0.0.0:5000 --log-level INFO  --access-logfile '-' --error-logfile '-'
 
 api-docs:  ## Show api docs (must be run on a desktop linux machine, with the app running locally)
 	@xdg-open http://localhost:5000/apidocs
 
-shell: clean export-flask-var  ## initialize a shell
-	 set -a && source .env && set +a && flask shell
+shell: clean  ## initialize a shell
+	@set -a && source .env && set +a && flask shell
 
-routes: export-flask-var  ## show all configured api routes
-	 set -a && source .env && set +a && flask routes
+routes:  ## show all configured api routes
+	@set -a && source .env && set +a && flask routes
 
 style:  ## Run isort and black auto formatting code style in the project
 	@echo 'running isort...'
