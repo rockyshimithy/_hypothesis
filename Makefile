@@ -27,11 +27,9 @@ requirements-pip:  ## Install pip requirements
 	@pip install -r requirements/development.txt
 
 init-db:  ## Start alembic with new DB
-	#@python -m $(PROJECT_NAME).factory db init
 	@flask db init
 
 migrate:  ## Create migrations
-	#@python -m $(PROJECT_NAME).factory db migrate
 	@flask db migrate
 
 upgrade: ## Execute the migrations
