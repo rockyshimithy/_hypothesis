@@ -21,6 +21,9 @@ class TransactionView(BaseView):
         self.schema = TransactionSchema()
 
     def get(self):
+        """
+        file: ../get_transactions.yml
+        """
         super().get()
 
         if self.query_string.get('date'):
@@ -41,6 +44,9 @@ class TransactionView(BaseView):
         return self.get_response()
 
     def post(self):
+        """
+        file: ../post_transaction.yml
+        """
         try:
             super().post()
 
@@ -71,6 +77,9 @@ class CustomerView(BaseView):
         self.schema = CustomerSchema()
 
     def get(self):
+        """
+        file: ../get_customers.yml
+        """
         super().get()
 
         if self.query_string.get('id'):  # test to filter with others values
@@ -83,6 +92,9 @@ class CustomerView(BaseView):
         return self.get_response()
 
     def post(self):
+        """
+        file: ../post_customer.yml
+        """
         try:
             super().post()
 

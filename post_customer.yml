@@ -1,0 +1,25 @@
+Create a new customer.
+---
+parameters:
+  - in: body
+    name: customer
+    description: The customer to create.
+    consumes:
+    - "application/json"
+    produces:
+    - "application/json"
+    schema:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+responses:
+  201:
+    description: successfully created
+  400:
+    description: bad request
+  409:
+    description: conflict, customer already exists
+

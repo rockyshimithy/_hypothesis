@@ -107,7 +107,11 @@ make coverage
 
 ## Documentation
 
-- TODO: Configure flasgger
+Besides this README, you can interact with the API using the Swagger Web UI provided with:
+```bash
+make api-docs
+```
+It shows the application routes, HTTP methods allowed and how to execute the requests on this app.
 
 ## Deployment
 
@@ -125,7 +129,6 @@ make shell
 
 - Run `make style / make lint / make coverage` on github actions as continuous integration
 - Create more tests to transactions and customers looking for bad scenarios
-- Configure swagger using flasgger
 - To able this application run on a production environment closier to reality, write a helm chart or yaml files need to deploy this project on k8s
 
 ## Feedback

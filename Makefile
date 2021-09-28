@@ -64,6 +64,9 @@ runserver: clean init-env ## Run gunicorn production server
 	 # containers anyhow, since they must redirect all of theirs logs to stdout/stderr.
 	 set -a && source .env && set +a && gunicorn --worker-tmp-dir /dev/shm -c gunicorn_settings.py hypothesis:app -b 0.0.0.0:5000 --log-level INFO  --access-logfile '-' --error-logfile '-'
 
+api-docs:  ## Show api docs (must be run on a desktop linux machine, with the app running locally)
+	@xdg-open http://localhost:5000/apidocs
+
 shell: clean ## initialize a shell
 	 set -a && source .env && set +a && flask shell
 

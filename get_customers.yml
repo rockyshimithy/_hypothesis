@@ -1,0 +1,21 @@
+List customers.
+---
+parameters:
+  - in: query
+    name: name
+    type: string
+    required: false
+    description: The customer's name
+    produces:
+    - "application/json"
+  - in: query
+    name: id
+    type: integer
+    required: false
+    description: The customer's identifier
+    produces:
+    - "application/json"
+responses:
+  200:
+    description: success
+

@@ -1,0 +1,20 @@
+List transactions.
+---
+parameters:
+  - in: query
+    name: customer_id
+    type: integer
+    required: false
+    description: The customer's identifier
+    produces:
+      - "application/json"
+  - in: query
+    name: date
+    type: string
+    required: false
+    description: The transaction's date
+    produces:
+      - "application/json"
+responses:
+  200:
+    description: success
