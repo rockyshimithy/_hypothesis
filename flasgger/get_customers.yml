@@ -6,15 +6,16 @@ parameters:
     type: string
     required: false
     description: The customer's name
-    produces:
-    - "application/json"
   - in: query
     name: id
     type: integer
     required: false
     description: The customer's identifier
-    produces:
-    - "application/json"
+  - in: query
+    name: page
+    type: integer
+    required: false
+    decription: The list customer's value for pagination
 responses:
   200:
     description: success

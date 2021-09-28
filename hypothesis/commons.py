@@ -2,7 +2,7 @@ import os
 from functools import lru_cache
 from pathlib import Path
 
-from flask import jsonify, request
+from flask import abort, jsonify, make_response, request
 from flask.views import MethodView
 
 
@@ -15,9 +15,10 @@ class BaseView(MethodView):
         self.status_code = 200
 
     def get(self):
-        page = self.query_string.get('page')
-        if isinstance(page, int):
-            self.page = page
+        try:
+            self.page = int(self.query_string.get('page', 1))
+        except ValueError:
+            abort(make_response(jsonify(error="Invalid value for page"), 400))
 
     def get_response(self):
         response = [

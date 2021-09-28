@@ -5,9 +5,9 @@ This is a minimal financial project written in flask to provide an API to handle
 ## Features
 
 - Create customer
-- List customers, filtering by name or identifier
+- List customers, filtering by name or identifier, and it is possible paginate
 - Create transaction, **given two different customers created before**
-- List transactions, filtering by date and/or customer identifier
+- List transactions, filtering by date and/or customer identifier, and it is possible paginate 
 
 ## Tech Stack
 

@@ -22,17 +22,20 @@ init-env:  ## create a .env file with the environment variables.
 	@cp etc/env.sample .env
 	@echo '.env file initialized at the project root. Customize it as you may.'
 
+export-flask-var:  ## Set FLASK_APP as env var
+	@export FLASK_APP=$(PROJECT_NAME)/__init__.py
+
 requirements-pip:  ## Install pip requirements
 	@pip install --upgrade pip
 	@pip install -r requirements/development.txt
 
-init-db:  ## Start alembic with new DB
+init-db: export-flask-var  ## Start alembic with new DB
 	@flask db init
 
-migrate:  ## Create migrations
+migrate: export-flask-var  ## Create migrations
 	@flask db migrate
 
-upgrade-migrations: ## Execute the migrations
+upgrade-migrations: export-flask-var  ## Execute the migrations
 	@flask db upgrade
 
 docker-compose-up: clean  ## Raise docker-compose for development environment
@@ -50,10 +53,10 @@ docker-build-image: clean  ## Build local docker image
 docker-run-server: clean  ## Run the app docker image locally
 	@docker run --rm -d -p 5000:5000 --name hypothesis --env-file .env --network bridge hypothesis:latest
 
-runserver-dev: clean ## Run flask development server
+runserver-dev: clean export-flask-var  ## Run flask development server
 	set -a && source .env && set +a && python dev-server.py
 
-runserver: clean ## Run gunicorn production server
+runserver: clean export-flask-var  ## Run gunicorn production server
 	 # Gunicorn needs to bind to 0.0.0.0 so to be able to receive requests from the docker network,
 	 # otherwise it will only receive them locally. With '-' logs are redirected to stdout (because containers)
 	 # /dev/shm tells to the workers to use shared memory, and in-memory filesystem, instead of
@@ -64,10 +67,10 @@ runserver: clean ## Run gunicorn production server
 api-docs:  ## Show api docs (must be run on a desktop linux machine, with the app running locally)
 	@xdg-open http://localhost:5000/apidocs
 
-shell: clean ## initialize a shell
+shell: clean export-flask-var  ## initialize a shell
 	 set -a && source .env && set +a && flask shell
 
-routes:  ## show all configured api routes
+routes: export-flask-var  ## show all configured api routes
 	 set -a && source .env && set +a && flask routes
 
 style:  ## Run isort and black auto formatting code style in the project
