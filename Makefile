@@ -1,6 +1,8 @@
 .PHONY: help
 SHELL := /bin/bash
 PROJECT_NAME = hypothesis
+CONTAINER_USER_ID = $$(id -u)
+CONTAINER_GROUP_ID = $$(id -g)
 
 help:  ## This help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
@@ -44,6 +46,12 @@ docker-compose-stop: clean  ## Stop docker-compose for development environment
 
 docker-compose-rm: docker-compose-stop ## Delete the development environment containers
 	@docker-compose rm -f
+
+docker-build-image: clean  ## Build local docker image
+	@docker build -t "$(PROJECT_NAME)" --pull --no-cache --build-arg CONTAINER_USER_ID="$(CONTAINER_USER_ID)" --build-arg CONTAINER_GROUP_ID="$(CONTAINER_GROUP_ID)" -f Dockerfile .
+
+docker-run-server: clean  ## Run the app docker image locally
+	@docker run --rm -d -p 5000:5000 --name hypothesis --env-file .env --network bridge hypothesis:latest
 
 runserver-dev: clean ## Run flask development server
 	set -a && source .env && set +a && python dev-server.py

@@ -2,6 +2,7 @@ version: '3'
 services:
   postgresql:
     image: postgres:13
+    network_mode: bridge
     container_name: postgres-hypothesis
     ports:
       - 5432:5432/tcp
