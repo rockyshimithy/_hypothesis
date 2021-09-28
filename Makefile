@@ -54,7 +54,7 @@ docker-run-server: clean  ## Run the app docker image locally
 runserver-dev: clean ## Run flask development server
 	set -a && source .env && set +a && python dev-server.py
 
-runserver: clean init-env ## Run gunicorn production server
+runserver: clean ## Run gunicorn production server
 	 # Gunicorn needs to bind to 0.0.0.0 so to be able to receive requests from the docker network,
 	 # otherwise it will only receive them locally. With '-' logs are redirected to stdout (because containers)
 	 # /dev/shm tells to the workers to use shared memory, and in-memory filesystem, instead of
