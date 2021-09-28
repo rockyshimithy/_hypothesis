@@ -53,37 +53,33 @@ make init-env
 docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <postgres_container_identifier>
 ```
 
-4. With the env activated install project requirements
+4. With the env activated install project requirements.
 ```bash
 make requirements-pip
 ```
 
-
+5. Run the migrations.
 ```bash
-make migrate
-```
-
-```bash
-make upgrade
+make upgrade-migrations
 ```
 
 To move on, choose how to run the application given the options below.
 
 ### Option 1 - Run on Docker
 
-5. Build the application image.
+6. Build the application image.
 ```bash
 make docker-build-image
 ```
 
-6. Then, run it.
+7. Then, run it.
 ```bash
 make docker-run-server
 ```
 
 ### Option 2 - Run on a Python Environment
 
-5. Run the application.
+6. Run the application.
 ```bash
 make runserver-dev
 ```

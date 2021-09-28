@@ -32,8 +32,7 @@ init-db:  ## Start alembic with new DB
 migrate:  ## Create migrations
 	@flask db migrate
 
-upgrade: ## Execute the migrations
-	#@python -m $(PROJECT_NAME).factory db upgrade
+upgrade-migrations: ## Execute the migrations
 	@flask db upgrade
 
 docker-compose-up: clean  ## Raise docker-compose for development environment
