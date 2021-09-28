@@ -16,7 +16,8 @@ pylint
 pylint-flask
 black
 freezegun
-isort[colors]
+isort
 pytest
 pytest-cov
+pytest-flask
 pytest-sugar

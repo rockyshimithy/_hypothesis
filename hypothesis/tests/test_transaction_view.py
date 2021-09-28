@@ -185,7 +185,7 @@ def test_list_transactions_search_by_customer_id(client, headers):
 
 
 @pytest.mark.usefixtures('session', 'transactions_saved')
-def test_list_transactions_search_by_data(client, headers):
+def test_list_transactions_search_by_date(client, headers):
     response = client.get('/transactions/?date=2025-04-25', headers=headers)
 
     content = response.json
