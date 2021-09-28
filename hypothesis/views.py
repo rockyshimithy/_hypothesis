@@ -82,7 +82,7 @@ class CustomerView(BaseView):
         """
         super().get()
 
-        if self.query_string.get('id'):  # test to filter with others values
+        if self.query_string.get('id'):
             self.query = self.query.filter_by(_id=self.query_string['id'])
         elif self.query_string.get('name'):
             self.query = self.query.filter(
