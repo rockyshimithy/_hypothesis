@@ -34,7 +34,7 @@ class BaseView(MethodView):
         return jsonify(response), self.status_code
 
 
-def get_version_file_path() -> str:
+def get_version_file_path():
     root_path = Path().absolute()
     file_path = os.path.join(str(root_path), 'VERSION')
 

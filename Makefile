@@ -89,4 +89,3 @@ test-matching: clean  ## Run only tests matching pattern. E.g.: make test-matchi
 
 coverage: clean  ## Run the test coverage report
 	@py.test --cov-config .coveragerc --cov $(PROJECT_NAME) $(PROJECT_NAME) --cov-report term-missing
-
