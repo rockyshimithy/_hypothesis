@@ -34,64 +34,76 @@ Before start, it's necessary create and activate a virtualenv with `Python 3.9.1
 
 1.  Clone the project on your machine and go to the root folder of this project (_hypothesis)
 ```bash
-  git clone git@github.com:rockyshimithy/_hypothesis.git
-  cd _hypothesis
+git clone git@github.com:rockyshimithy/_hypothesis.git
+cd _hypothesis
 ```
 
 2. Run docker-compose to start Postgres
 ```bash
-  make docker-compose-up
+make docker-compose-up
 ```
 
 3. Create an `.env` file with the specific configurations
 ```bash
-  make init-env
+make init-env
 ```
-
 **_NOTE:_** If necessary and you are struggling with some docker network stuff, you can run the following command and discovery the IP address to set on `.env` file in `DB_HOST` variable.
 
 ```bash
-  docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <postgres_container_identifier>
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <postgres_container_identifier>
+```
+
+4. With the env activated install project requirements
+```bash
+make requirements-pip
+```
+
+```bash
+make init-db
+```
+
+```bash
+make migrate
+```
+
+```bash
+make upgrade
 ```
 
 To move on, choose how to run the application given the options below.
 
 ### Option 1 - Run on Docker
 
-4. Build the application image
+5. Build the application image
 ```bash
-  make docker-build-image
+make docker-build-image
 ```
 
-5. Then, run it
+6. Then, run it
 ```bash
-  make docker-run-server
+make docker-run-server
 ```
 
 ### Option 2 - Run on a Python Environment
 
-4. With the env activated Install project requirements
+5. Run the application
 ```bash
-  make requirements-pip
+make runserver-dev
 ```
-
-
-
-------------------------------------
 
 ## Running Tests
 
-Consider be in an Python Environment with the packages installed
-
 To run tests, run the following command
 ```bash
-  make test
+make test
 ```
 
 To run coverage, run the following command
 ```bash
-  make coverage
+make coverage
 ```
+
+**_NOTE:_** Consider be in an Python Environment with the packages installed
 
 ## Documentation
 
@@ -100,6 +112,14 @@ To run coverage, run the following command
 ## Deployment
 
 You can deploy this project on production with your Docker orchestrator of choice.
+
+## REPL
+
+```bash
+make shell
+```
+
+**_NOTE:_** Consider be in an Python Environment with the packages installed
 
 ## Enhancements that can be applied to this project
 
