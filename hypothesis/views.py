@@ -22,7 +22,7 @@ class TransactionView(BaseView):
 
     def get(self):
         """
-        file: ../get_transactions.yml
+        file: ../flasgger/get_transactions.yml
         """
         super().get()
 
@@ -45,7 +45,7 @@ class TransactionView(BaseView):
 
     def post(self):
         """
-        file: ../post_transaction.yml
+        file: ../flasgger/post_transaction.yml
         """
         try:
             super().post()
@@ -78,7 +78,7 @@ class CustomerView(BaseView):
 
     def get(self):
         """
-        file: ../get_customers.yml
+        file: ../flasgger/get_customers.yml
         """
         super().get()
 
@@ -93,7 +93,7 @@ class CustomerView(BaseView):
 
     def post(self):
         """
-        file: ../post_customer.yml
+        file: ../flasgger/post_customer.yml
         """
         try:
             super().post()
