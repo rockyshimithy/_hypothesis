@@ -30,17 +30,34 @@ This is a minimal financial project written in flask to provide an API to handle
 
 ## Run Locally
 
-Before start, it's necessary create and activate a virtualenv with `Python 3.9.1`, to do it I really recommend `pyenv`.
-
 1.  Clone the project on your machine and go to the root folder of this project (_hypothesis)
 ```bash
-  $ git clone git@github.com:rockyshimithy/_hypothesis.git
-  $ cd _hypothesis
+  git clone git@github.com:rockyshimithy/_hypothesis.git
+  cd _hypothesis
 ```
 
-2. With the env activated Install project requirements
+2. Execute docker-compose to start Postgres
+
+```bash
+  make docker-compose-up
+```
+
+To move on, choose how to run the application given the options below
+
+# Option 1 - Run on Docker
+
+```bash
+  make docker-build-image
+```
+
+# Option 2 - Run on a Python Environment
+
+Before start, it's necessary create and activate a virtualenv with `Python 3.9.1`, to do it I really recommend `pyenv`.
+
+3. With the env activated Install project requirements
 
 ```bash
   make requirements-pip
 ```
-    
+
+[test](#features) 
