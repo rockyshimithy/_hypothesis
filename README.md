@@ -124,7 +124,7 @@ make shell
 
 - Run `make style / make lint / make coverage` on github actions as continuous integration.
 - Create more tests to transactions and customers looking for bad scenarios.
-- To able this application run on a production environment closier to reality, write a helm chart or yaml files need to deploy this project on k8s.
+- To enable this application to run on a production environment closer to reality, write a helm chart or yaml files needed to deploy this project on k8s.
 
 ## Feedback
 
