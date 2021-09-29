@@ -47,7 +47,6 @@ make docker-compose-up
 ```bash
 make init-env
 ```
-**_NOTE:_** If necessary and you are struggling with some docker network stuff, you can run the following command and discovery the IP address to set on `.env` file in `DB_HOST` variable.
 
 ```bash
 docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <postgres_container_identifier>
@@ -62,6 +61,7 @@ make requirements-pip
 ```bash
 make upgrade-migrations
 ```
+**_NOTE:_** If necessary and you are struggling with docker network stuff, you can run the following command and discover the IP address to set on `.env` file in `DB_HOST` variable.
 
 To move on, choose how to run the application given the options below.
 
